@@ -1,0 +1,5 @@
+title 0.6
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note
+
+palvelin-->selain: 201 created
