@@ -41,6 +41,14 @@ const App = () => {
                       }, 5000)
 
                     })
+                    .catch(error => {
+                      // pääset käsiksi palvelimen palauttamaan virheilmoitusolioon näin
+                      console.log(error.response.data)
+                      setErrorMessage(`${error.response.data.error}`);
+                      setTimeout(() => {
+                        setErrorMessage(null)
+                      }, 5000)
+                    })
     }
     else{
       if(window.confirm(`${newName} already exists. Do you want to update his/her information?`)){
