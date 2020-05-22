@@ -2,7 +2,7 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Hello World!",
+    "title": "Hello World 2!",
     "author": "Juhana Kuparinen",
     "url": "http://localhost:3003/api/blogs",
     "likes": 0
