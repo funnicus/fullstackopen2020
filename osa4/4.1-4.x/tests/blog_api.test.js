@@ -1,8 +1,33 @@
+const helper = require('./test_helper')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 
 const api = supertest(app)
+
+const Blog = require('../models/blog')
+
+beforeEach(async () => {
+    await Blog.deleteMany({})
+  
+    let blogObject = new Blog(helper.initialBlogs[0])  
+    await blogObject.save()
+  
+    blogObject = new Blog(helper.initialBlogs[1])  
+    await blogObject.save()
+
+    blogObject = new Blog(helper.initialBlogs[2])  
+    await blogObject.save()
+
+    blogObject = new Blog(helper.initialBlogs[3])  
+    await blogObject.save()
+
+    blogObject = new Blog(helper.initialBlogs[4])  
+    await blogObject.save()
+
+    blogObject = new Blog(helper.initialBlogs[5])  
+    await blogObject.save()
+})
 
 describe('Get works', () => {
     test('blogs are returned as json...', async () => {
@@ -10,6 +35,12 @@ describe('Get works', () => {
             .get('/api/blogs')
             .expect(200)
             .expect('Content-Type', /application\/json/)
+    })
+
+    test('all blogs are returned', async () => {
+        const response = await api.get('/api/blogs')
+      
+        expect(response.body).toHaveLength(helper.initialBlogs.length)
     })
 })
 
@@ -27,15 +58,26 @@ describe('Correct id-name', () => {
 
 describe('Post', () => {
     test('Post works', async () => {
+        const before = await api.get('/api/blogs')
+
         await api
             .post('/api/blogs')
             .send({
-                "title": "This is a JEST test",
+                "title": "Hmmmm",
                 "author": "Juhana Kuparinen",
                 "url": "http://localhost:3003/api/blogs",
-                "likes": 0
+                "likes": 666
             })
-            .expect(201)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const after = await api.get('/api/blogs')
+
+        console.log(after.body)
+
+        //Is there a new blog?
+        const blogsAtEnd = await helper.blogsInDb()  
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
     })
 })
 
