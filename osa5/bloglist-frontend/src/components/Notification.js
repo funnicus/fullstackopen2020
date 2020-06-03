@@ -1,7 +1,8 @@
 import React from 'react'
-const Notification = ({ message }) => (
-  <div>
-      <p>{message}</p>
+import '../styles/Notification.css'
+const Notification = ({ message, messageClassName }) => (
+  <div className={messageClassName}>
+    {message}
   </div>
 )
 
