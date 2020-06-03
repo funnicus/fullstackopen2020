@@ -71,9 +71,6 @@ describe('Post', () => {
                         .expect(200)
                         .expect('Content-Type', /application\/json/)
 
-        console.log(userInfo.body.token)
-        console.log(typeof userInfo.body.token)
-
         let newBlog = {
             "title": "Jest Test with tokens",
             "author": "Juhana Kuparinen",
