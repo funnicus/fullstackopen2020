@@ -3,33 +3,26 @@ import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/loginService'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
   const [user, setUser] = useState(null)
-  const [messageClassName, setMessageClassName] = useState("empty")
+  const [messageClassName, setMessageClassName] = useState('empty')
   const [message, setMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
-  const handleUsernameChange = e => setUsername(e.target.value);
-  const handlePasswordChange = e => setPassword(e.target.value);
-
-  const handleTitleChange = e => setTitle(e.target.value);
-  const handleAuthorChange = e => setAuthor(e.target.value);
-  const handleUrlChange = e => setUrl(e.target.value);
+  const handleUsernameChange = e => setUsername(e.target.value)
+  const handlePasswordChange = e => setPassword(e.target.value)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -56,78 +49,82 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setMessageClassName("message")
+      setMessageClassName('message')
       setMessage('Logged in!')
       setTimeout(() => {
         setMessage(null)
-        setMessageClassName("empty")
+        setMessageClassName('empty')
       }, 5000)
     } catch (exception) {
-      setMessageClassName("errorMessage")
+      setMessageClassName('errorMessage')
       setErrorMessage('wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
-        setMessageClassName("empty")
+        setMessageClassName('empty')
       }, 5000)
     }
   }
 
   const handleLogout = (event) => {
-    setMessageClassName("message")
+    setMessageClassName('message')
     setMessage('Logged out!')
-      setTimeout(() => {
-        setMessage(null)
-        setMessageClassName("empty")
-      }, 5000)
+    setTimeout(() => {
+      setMessage(null)
+      setMessageClassName('empty')
+    }, 5000)
     event.preventDefault()
     window.localStorage.clear()
     blogService.setToken(null)
     setUser(null)
   }
 
-  const handleCreate = async (event) => {
-    event.preventDefault()
-    const newBlogObj = { title: title, author: author, url: url }
-    const returnedBlog = await blogService.create(newBlogObj)
+  const handleCreate = async (blogObject) => {
+    const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
-    setMessageClassName("message")
-    setMessage(`Blog named "${title}", by ${author} was created!`)
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    setMessageClassName('message')
+    setMessage(`Blog named "${returnedBlog.title}", by ${returnedBlog.author} was created!`)
     setTimeout(() => {
       setMessage(null)
-      setMessageClassName("empty")
+      setMessageClassName('empty')
     }, 5000)
+  }
+
+  const removeBlog = async ( id ) => {
+    if(window.confirm('Do you really want to delete this blog?')){
+      try{
+        const newBlogList = await blogService.remove(id)
+        setBlogs(newBlogList)
+      }
+      catch(error){
+        console.log(error)
+      }
+    }
   }
 
   return (
     <div>
       <Notification message={errorMessage || message} messageClassName={messageClassName} />
       {user === null ?
-      <LoginForm
-       handleLogin={handleLogin} 
-       username={username} 
-       handleUsernameChange={handleUsernameChange} 
-       password={password} 
-       handlePasswordChange={handlePasswordChange} 
-      /> :
-      <div>
+        <LoginForm
+          handleLogin={handleLogin}
+          username={username}
+          handleUsernameChange={handleUsernameChange}
+          password={password}
+          handlePasswordChange={handlePasswordChange}
+        /> :
         <div>
-          <p>{user.name} logged in</p><button onClick={handleLogout}>logout</button>
+          <div>
+            <p>{user.name} logged in</p><button onClick={handleLogout}>logout</button>
+          </div>
+          <Togglable buttonLabel='create a blog'>
+            <CreateBlogForm
+              handleCreate={handleCreate}
+            />
+          </Togglable>
+
+          <BlogList blogs={blogs} removeBlog={removeBlog} />
         </div>
-        <CreateBlogForm 
-        handleCreate={handleCreate} 
-        title={title} 
-        handleTitleChange={handleTitleChange} 
-        author={author} 
-        handleAuthorChange={handleAuthorChange} 
-        url={url} 
-        handleUrlChange={handleUrlChange} 
-        />
-        <BlogList blogs={blogs}/>
-      </div>
-    }
+      }
     </div>
   )
 }
