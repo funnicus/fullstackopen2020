@@ -20,9 +20,12 @@ const App = () => {
   const handlePasswordChange = e => setPassword(e.target.value)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    const fetchBlogs = async () => {
+      const receivedBlogs = await blogService.getAll()
+      setBlogs(receivedBlogs)
+      console.log(receivedBlogs)
+    }
+    fetchBlogs()
   }, [])
 
   useEffect(() => {
@@ -33,6 +36,15 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const likeBlog = async ( id ) => {
+    const oldBlog = await blogService.getOne(id)
+    const newBlog = { ...oldBlog }
+    newBlog.likes++
+    await blogService.update(id, newBlog)
+    const updatedBlogList = await blogService.getAll()
+    setBlogs(updatedBlogList)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -122,7 +134,7 @@ const App = () => {
             />
           </Togglable>
 
-          <BlogList blogs={blogs} removeBlog={removeBlog} />
+          <BlogList blogs={blogs} removeBlog={removeBlog} likeBlog={likeBlog} />
         </div>
       }
     </div>

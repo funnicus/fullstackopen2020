@@ -28,6 +28,7 @@ const update = async (id, newObject) => {
   const request = axios.put(`${baseUrl}/${id}`, newObject)
   return request.then(res => {
     console.log(res)
+    console.log(res.data)
     return res.data
   })
 }

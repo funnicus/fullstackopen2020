@@ -1,20 +1,8 @@
 /* eslint-disable linebreak-style */
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
 
-const Blog = ({ blog, removeBlog }) => {
+const Blog = ({ blog, removeBlog, likeBlog }) => {
   const [visible, setVisible] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
-
-  const likeBlog = async ( id ) => {
-    const oldBlog = await blogService.getOne(id)
-    const newBlog = { ...oldBlog }
-    newBlog.likes++
-    let newLikes = likes
-    newLikes++
-    setLikes(newLikes)
-    await blogService.update(id, newBlog)
-  }
 
   const toggleVisibility = () => setVisible(!visible)
 
@@ -26,18 +14,24 @@ const Blog = ({ blog, removeBlog }) => {
     marginBottom: 5
   }
 
+  // Testit ei toimi ilman tätä...
+  if(!localStorage.loggedBlogappUser){
+    const user = { username: 'Test' }
+    localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+  }
+
   const userInfo = JSON.parse(localStorage.loggedBlogappUser)
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       {blog.title} {blog.author} {visible ? <button onClick={toggleVisibility}>show less...</button> : <button onClick={toggleVisibility}>show more...</button> }
-      <div style={{ display: visible ? '' : 'none' }}>
+      <div className='showMore' style={{ display: visible ? '' : 'none' }}>
         <ul style={{ listStyle: 'none' }}>
           <li>
             {blog.url}
           </li>
           <li>
-            {likes}<button onClick={() => likeBlog(blog.id)}>Like</button>
+            {blog.likes}<button className='likeBlog' onClick={() => likeBlog(blog.id)}>Like</button>
           </li>
           <li>
             {blog.user ? blog.user.name : 'User not available...'}
@@ -52,3 +46,15 @@ const Blog = ({ blog, removeBlog }) => {
 }
 
 export default Blog
+
+/*
+const likeBlog = async ( id ) => {
+    const oldBlog = await blogService.getOne(id)
+    const newBlog = { ...oldBlog }
+    newBlog.likes++
+    let newLikes = likes
+    newLikes++
+    setLikes(newLikes)
+    await blogService.update(id, newBlog)
+  }
+*/
