@@ -21,6 +21,10 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
   }
 
   const userInfo = JSON.parse(localStorage.loggedBlogappUser)
+  console.log(blog.user)
+  console.log(blog.user.name )
+  console.log(blog.user ? blog.user.name : 'User not available...')
+  console.log('==============')
 
   return (
     <div className='blog' style={blogStyle}>
@@ -37,7 +41,7 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
             {blog.user ? blog.user.name : 'User not available...'}
           </li>
           <li>
-            {blog.user && userInfo.username === blog.user.username ? <button onClick={() => removeBlog(blog.id)}>remove blog</button> : ''}
+            {blog.user && (userInfo.username === blog.user.username) ? <button id='removeBlog' onClick={() => removeBlog(blog.id)}>remove blog</button> : ''}
           </li>
         </ul>
       </div>

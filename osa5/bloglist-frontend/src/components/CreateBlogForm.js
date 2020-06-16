@@ -52,7 +52,7 @@ const CreateBlogForm = ({ handleCreate }) => {
             onChange={e => handleUrlChange(e)}
           />
         </div>
-        <button type="submit">create</button>
+        <button id='submit-blog' type="submit">create</button>
       </form>
     </div>
   )}

@@ -92,7 +92,8 @@ const App = () => {
 
   const handleCreate = async (blogObject) => {
     const returnedBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(returnedBlog))
+    const updatedBlogList = await blogService.getAll()
+    setBlogs(updatedBlogList)
     setMessageClassName('message')
     setMessage(`Blog named "${returnedBlog.title}", by ${returnedBlog.author} was created!`)
     setTimeout(() => {
@@ -109,6 +110,12 @@ const App = () => {
       }
       catch(error){
         console.log(error)
+        setMessageClassName('errorMessage')
+        setErrorMessage('unauthorized')
+        setTimeout(() => {
+          setErrorMessage(null)
+          setMessageClassName('empty')
+        }, 5000)
       }
     }
   }
