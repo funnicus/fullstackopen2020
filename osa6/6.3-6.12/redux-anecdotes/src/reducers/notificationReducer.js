@@ -9,10 +9,18 @@
     }
   }
   
-  export const votedAnecdote = anecdote => {
-    return {
-      type: 'SET_VOTED_ANECDOTE',
-      anecdote
+  export const votedAnecdote = (anecdote, time) => {
+    return async dispatch => {
+      dispatch({
+        type: 'SET_VOTED_ANECDOTE',
+        anecdote
+      })
+      setTimeout(() => {
+        dispatch({
+          type: 'SET_VOTED_ANECDOTE',
+          anecdote: '',
+        })
+      }, time)
     }
   }
   

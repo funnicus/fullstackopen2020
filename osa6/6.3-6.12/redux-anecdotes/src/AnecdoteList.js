@@ -4,6 +4,7 @@ import { voteAnecdote } from './reducers/anecdoteReducer'
 import { votedAnecdote } from './reducers/notificationReducer'
 import { filter } from './reducers/filterReducer'
 import Filter from './components/Filter'
+import anecdoteService from './services/anecdotes'
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ filter, anecdotes }) => {
@@ -14,13 +15,10 @@ const AnecdoteList = () => {
   const sortedAnecdotes = anecdotes.sort((a, b) => b.votes - a.votes)
   const dispatch = useDispatch()
 
-  const vote = (id, content) => {
+  const vote = async (id, content) => {
     console.log('vote', id)
     dispatch(voteAnecdote(id))
-    dispatch(votedAnecdote(`You voted: ${content}`))
-    setTimeout(() => {
-      dispatch(votedAnecdote(``))
-    }, 5000)
+    dispatch(votedAnecdote(`You voted: ${content}`, 5000))
   }
 
   const handleFilterChange = e => {
