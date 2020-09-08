@@ -1,21 +1,28 @@
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+
+import { setTitle, setAuthor, setUrl } from '../reducers/blogFormReducer'
 
 const CreateBlogForm = ({ handleCreate }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
-  const handleTitleChange = e => setTitle(e.target.value)
-  const handleAuthorChange = e => setAuthor(e.target.value)
-  const handleUrlChange = e => setUrl(e.target.value)
+  const dispatch = useDispatch()
+
+  const title = useSelector(state => state.blogForm.title)
+  const author = useSelector(state => state.blogForm.author)
+  const url = useSelector(state => state.blogForm.url)
+
+  const handleTitleChange = e => dispatch(setTitle(e.target.value))
+  const handleAuthorChange = e => dispatch(setAuthor(e.target.value))
+  const handleUrlChange = e => dispatch(setUrl(e.target.value))
 
   const addBlog = async (event) => {
     event.preventDefault()
     const newBlogObj = { title: title, author: author, url: url }
     handleCreate(newBlogObj)
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    dispatch(setTitle(''))
+    dispatch(setAuthor(''))
+    dispatch(setUrl(''))
   }
 
   return (

@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
+
+import { setNotification } from './reducers/notificationReducer'
+import { setUsername } from './reducers/loginReducer'
+import { setPassword } from './reducers/loginReducer'
+import { likeOneBlog, createBlog, deleteBlog, initializeBlogs } from './reducers/blogsReducer'
+
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import CreateBlogForm from './components/CreateBlogForm'
@@ -8,25 +16,21 @@ import blogService from './services/blogs'
 import loginService from './services/loginService'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+
+  const dispatch = useDispatch()
+
+  
   const [user, setUser] = useState(null)
-  const [messageClassName, setMessageClassName] = useState('empty')
-  const [message, setMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
-  const handleUsernameChange = e => setUsername(e.target.value)
-  const handlePasswordChange = e => setPassword(e.target.value)
-
+  const blogs = useSelector(state => state.blogs)
+  const username = useSelector(state => state.loginForm.username)
+  const password = useSelector(state => state.loginForm.password)
+  
+  const handleUsernameChange = e => dispatch(setUsername(e.target.value))
+  const handlePasswordChange = e => dispatch(setPassword(e.target.value))
+  
   useEffect(() => {
-    const fetchBlogs = async () => {
-      const receivedBlogs = await blogService.getAll()
-      setBlogs(receivedBlogs)
-      console.log(receivedBlogs)
-    }
-    fetchBlogs()
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -37,14 +41,7 @@ const App = () => {
     }
   }, [])
 
-  const likeBlog = async ( id ) => {
-    const oldBlog = await blogService.getOne(id)
-    const newBlog = { ...oldBlog }
-    newBlog.likes++
-    await blogService.update(id, newBlog)
-    const updatedBlogList = await blogService.getAll()
-    setBlogs(updatedBlogList)
-  }
+  const likeBlog = id => dispatch(likeOneBlog(id))
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -61,29 +58,14 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setMessageClassName('message')
-      setMessage('Logged in!')
-      setTimeout(() => {
-        setMessage(null)
-        setMessageClassName('empty')
-      }, 5000)
+      dispatch(setNotification('Logged in!', 'message', 5000))
     } catch (exception) {
-      setMessageClassName('errorMessage')
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-        setMessageClassName('empty')
-      }, 5000)
+      dispatch(setNotification('wrong credentials...', 'errorMessage', 5000))
     }
   }
 
   const handleLogout = (event) => {
-    setMessageClassName('message')
-    setMessage('Logged out!')
-    setTimeout(() => {
-      setMessage(null)
-      setMessageClassName('empty')
-    }, 5000)
+    dispatch(setNotification('Logged out!', 'message', 5000))
     event.preventDefault()
     window.localStorage.clear()
     blogService.setToken(null)
@@ -91,38 +73,26 @@ const App = () => {
   }
 
   const handleCreate = async (blogObject) => {
-    const returnedBlog = await blogService.create(blogObject)
-    const updatedBlogList = await blogService.getAll()
-    setBlogs(updatedBlogList)
-    setMessageClassName('message')
-    setMessage(`Blog named "${returnedBlog.title}", by ${returnedBlog.author} was created!`)
-    setTimeout(() => {
-      setMessage(null)
-      setMessageClassName('empty')
-    }, 5000)
+    dispatch(createBlog(blogObject))
+    dispatch(setNotification(`Blog named "${blogObject.title}", by ${blogObject.author} was created!`, 'message', 5000))
   }
 
   const removeBlog = async ( id ) => {
     if(window.confirm('Do you really want to delete this blog?')){
       try{
-        const newBlogList = await blogService.remove(id)
-        setBlogs(newBlogList)
+        dispatch(deleteBlog(id))
+        dispatch(setNotification('Removed', 'message', 5000))
       }
       catch(error){
         console.log(error)
-        setMessageClassName('errorMessage')
-        setErrorMessage('unauthorized')
-        setTimeout(() => {
-          setErrorMessage(null)
-          setMessageClassName('empty')
-        }, 5000)
+        dispatch(setNotification('unauthorized', 'errorMessage', 5000))
       }
     }
   }
 
   return (
     <div>
-      <Notification message={errorMessage || message} messageClassName={messageClassName} />
+      <Notification />
       {user === null ?
         <LoginForm
           handleLogin={handleLogin}

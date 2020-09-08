@@ -21,10 +21,6 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
   }
 
   const userInfo = JSON.parse(localStorage.loggedBlogappUser)
-  console.log(blog.user)
-  console.log(blog.user.name )
-  console.log(blog.user ? blog.user.name : 'User not available...')
-  console.log('==============')
 
   return (
     <div className='blog' style={blogStyle}>

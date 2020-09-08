@@ -41,9 +41,7 @@ blogsRouter.post('/', async (request, response) => {
       error: 'Title or url missing' 
     })
   }
-
-  console.log(body.likes)
-
+  
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -55,6 +53,7 @@ blogsRouter.post('/', async (request, response) => {
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
+  console.log(savedBlog)
 
   response.json(savedBlog.toJSON())
 
@@ -89,16 +88,21 @@ blogsRouter.put('/:id', async (request, response) => {
     })
   }
   
-  const blog = {
-    title: body.title,
-    author: body.author,
-    user: body.user,
-    url: body.url,
-    likes: body.likes
+  try{
+    const blog = {
+      title: body.title,
+      author: body.author,
+      user: body.user,
+      url: body.url,
+      likes: body.likes
+    }
+    
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true }).populate('user', { username: 1, name: 1 })
+    response.json(updatedBlog.toJSON())
   }
-  
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-  response.json(updatedBlog.toJSON())
+  catch(err){
+    console.log(err)
+  }
 })
 
 module.exports = blogsRouter
