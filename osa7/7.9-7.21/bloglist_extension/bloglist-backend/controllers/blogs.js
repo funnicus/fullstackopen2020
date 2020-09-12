@@ -41,7 +41,7 @@ blogsRouter.post('/', async (request, response) => {
       error: 'Title or url missing' 
     })
   }
-  
+
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -53,9 +53,9 @@ blogsRouter.post('/', async (request, response) => {
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
-  console.log(savedBlog)
+  const resBlog = await Blog.findById(savedBlog.id).populate('user', { username: 1, name: 1 })
 
-  response.json(savedBlog.toJSON())
+  response.json(resBlog.toJSON())
 
 })
 
