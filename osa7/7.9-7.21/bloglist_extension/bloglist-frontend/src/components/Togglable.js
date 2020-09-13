@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useState } from 'react'
+import { Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 // eslint-disable-next-line no-unused-vars
 const Togglable = React.forwardRef((props, ref) => {
@@ -15,11 +16,11 @@ const Togglable = React.forwardRef((props, ref) => {
   return(
     <div>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+        <Button variant='contained' onClick={toggleVisibility}>{props.buttonLabel}</Button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>cancel</button>
+        <Button variant='contained' onClick={toggleVisibility}>cancel</Button>
       </div>
     </div>
   )

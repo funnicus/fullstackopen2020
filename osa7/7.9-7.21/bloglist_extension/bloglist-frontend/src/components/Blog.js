@@ -1,7 +1,7 @@
 /* eslint-disable linebreak-style */
 import React, { useState } from 'react'
 
-const Blog = ({ blog, removeBlog, likeBlog }) => {
+const Blog = ({ blog, removeBlog, likeBlog, comment, handleCommentChange, handleCommenting }) => {
 
   if(!blog) return null
 
@@ -11,7 +11,14 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
     localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
   }
 
+  const commenting = event => {
+    event.preventDefault()
+    handleCommenting(blog.id, comment)
+  }
+
   const userInfo = JSON.parse(localStorage.loggedBlogappUser)
+
+  const comments = blog.comments.map(c => <li key={c}>{c}</li>)
 
   return (
     <div>
@@ -30,6 +37,22 @@ const Blog = ({ blog, removeBlog, likeBlog }) => {
             {blog.user && (userInfo.username === blog.user.username) ? <button id='removeBlog' onClick={() => removeBlog(blog.id)}>remove blog</button> : ''}
           </li>
         </ul>
+        <h3>Comments:</h3>
+        <form onSubmit={commenting}>
+          <div className='comment-field'>
+            <input 
+            type='comment'
+            id='comment'
+            value={comment}
+            name='Comment'
+            placeholder='...' 
+            onChange={e => handleCommentChange(e)} />
+            <button type='submit'>Add comment</button>
+          </div>
+        </form>
+          <ul>
+            {comments}
+          </ul>
     </div>
   )
 }

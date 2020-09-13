@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
+import Container from '@material-ui/core/Container'
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Button
+} from '@material-ui/core'
 
 import { setNotification } from './reducers/notificationReducer'
 import { setUsername } from './reducers/loginReducer'
 import { setPassword } from './reducers/loginReducer'
-import { likeOneBlog, createBlog, deleteBlog, initializeBlogs } from './reducers/blogsReducer'
+import { likeOneBlog, createBlog, deleteBlog, commentOnBlog, initializeBlogs } from './reducers/blogsReducer'
 import { setUser } from './reducers/userReducer'
 
 import BlogList from './components/BlogList'
@@ -28,6 +35,7 @@ const App = () => {
   const dispatch = useDispatch()
 
   const [users, setUsers] = useState([])
+  const [comment, setComment] = useState('')
 
   const loggedUser = useSelector(state => state.user)
   const blogs = useSelector(state => state.blogs)
@@ -36,6 +44,7 @@ const App = () => {
 
   const handleUsernameChange = e => dispatch(setUsername(e.target.value))
   const handlePasswordChange = e => dispatch(setPassword(e.target.value))
+  const handleCommentChange = e => setComment(e.target.value)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -106,6 +115,18 @@ const App = () => {
     }
   }
 
+  const handleCommenting = async (id, comment) => {
+    try {
+      dispatch(commentOnBlog(id, comment))
+      dispatch(setNotification('Comment added!', 'message', 5000))
+      setComment('')
+    }
+    catch (error) {
+      console.log(error)
+      dispatch(setNotification('comment error', 'errorMessage', 5000))
+    }
+  }
+
   const padding = {
     padding: 5
   }
@@ -119,9 +140,9 @@ const App = () => {
   const blog = blogMatch
     ? blogs.find(b => b.id === blogMatch.params.id)
     : null
-
+  
   return (
-    <div>
+    <Container>
       <Notification />
       {loggedUser === null ?
         <LoginForm
@@ -132,21 +153,23 @@ const App = () => {
           handlePasswordChange={handlePasswordChange}
         /> :
         <div>
-          <div className='menu'>
-            <ul>
-              <li><Link style={padding} to='/'>Home</Link></li>
-              <li><Link style={padding} to='/blogs'>Blogs</Link></li>
-              <li><Link style={padding} to='/users'>Users</Link></li>
-              <li>{loggedUser.name} logged in</li>
-              <li><button onClick={handleLogout}>logout</button></li>
-            </ul>
-          </div>
+          <AppBar>
+            <Toolbar>
+              <IconButton edge='start' color='inherit' aria-label='menu'>
+              </IconButton>
+              <Button color='inherit' component={Link} to='/'>Home</Button>
+              <Button color='inherit' component={Link} to='/blogs'>Blogs</Button>
+              <Button color='inherit' component={Link} to='/users'>Users</Button>
+              <em>{loggedUser.name} logged in</em>
+              <Button color='inherit' onClick={handleLogout}>logout</Button>
+            </Toolbar>
+          </AppBar>
           <Switch>
             <Route path='/users/:id'>
               <User user={user} />
             </Route>
             <Route path='/blogs/:id'>
-              <Blog blog={blog} removeBlog={removeBlog} likeBlog={likeBlog} />
+              <Blog blog={blog} removeBlog={removeBlog} likeBlog={likeBlog} comment={comment} handleCommentChange={handleCommentChange} handleCommenting={handleCommenting} />
             </Route>
             <Route path='/blogs'>
               <BlogList blogs={blogs} removeBlog={removeBlog} likeBlog={likeBlog} />
@@ -155,8 +178,8 @@ const App = () => {
               <UserList users={users} />
             </Route>
             <Route path='/'>
-            <h2>Welcome to blog app {loggedUser.name}!</h2>
-            <h3>Create a blog or browse existing ones!</h3>
+              <h2>Welcome to blog app {loggedUser.name}!</h2>
+              <h3>Create a blog or browse existing ones!</h3>
               <Togglable buttonLabel='create a blog'>
                 <CreateBlogForm
                   handleCreate={handleCreate}
@@ -166,7 +189,7 @@ const App = () => {
           </Switch>
         </div>
       }
-    </div>
+    </Container>
   )
 }
 

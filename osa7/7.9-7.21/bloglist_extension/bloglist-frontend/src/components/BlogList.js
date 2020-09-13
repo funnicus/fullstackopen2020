@@ -1,24 +1,30 @@
 import React from 'react'
 import Blog from './Blog'
 import { Link } from 'react-router-dom'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from '@material-ui/core'
 
 const BlogList = ({ blogs, removeBlog, likeBlog }) => {
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   const sortedBlogList = blogs.sort((a, b) => b.likes - a.likes)
-  const bloglist = sortedBlogList.map(blog => <div className='blog' style={blogStyle} key={blog.id} ><Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link></div>)
+  const bloglist = sortedBlogList.map(blog => <TableRow key={blog.id} ><TableCell><Link to={`/blogs/${blog.id}`}>{blog.title}</Link></TableCell><TableCell>{blog.author}</TableCell></TableRow>)
 
   return (
     <div>
       <h2>Blogs</h2>
-      {bloglist}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            {bloglist}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

@@ -9,7 +9,8 @@ const blogSchema = mongoose.Schema({
     ref: 'User'
   },
   url: String,
-  likes: Number
+  likes: Number,
+  comments: Array
 })
 
 //Voimme muokata palautetun olion ominaisuuksia toJSONin kautta

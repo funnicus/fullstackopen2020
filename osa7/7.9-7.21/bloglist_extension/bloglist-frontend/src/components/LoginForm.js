@@ -1,14 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import {
+  Button,
+  TextField,
+} from '@material-ui/core'
+import './LoginForm.css'
 
 const LoginForm = ({ handleLogin, username, handleUsernameChange, password, handlePasswordChange }) => {
   return (
       <div id='loginForm'>
-        <h2>Log in to Application</h2>
+        <h2>Log in to the Blog App</h2>
         <form onSubmit={handleLogin}>
           <div>
-              username
-            <input
+            <TextField
+              label='username'
               type="text"
               id='username'
               value={username}
@@ -17,8 +22,8 @@ const LoginForm = ({ handleLogin, username, handleUsernameChange, password, hand
             />
           </div>
           <div>
-              password
-            <input
+            <TextField
+              label='password'
               type="password"
               id='password'
               value={password}
@@ -26,7 +31,7 @@ const LoginForm = ({ handleLogin, username, handleUsernameChange, password, hand
               onChange={e => handlePasswordChange(e)}
             />
           </div>
-          <button id='login-button' type="submit">login</button>
+          <Button variant='contained' id='login-button' type="submit">login</Button>
         </form>
       </div>
   )

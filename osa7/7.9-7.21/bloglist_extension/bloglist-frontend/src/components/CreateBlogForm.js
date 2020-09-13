@@ -1,4 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
+import {
+  Button,
+  TextField
+} from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 
@@ -30,8 +34,8 @@ const CreateBlogForm = ({ handleCreate }) => {
       <h2>Create a new Blog</h2>
       <form onSubmit={addBlog}>
         <div>
-          title:
-          <input
+          <TextField
+            label='Title'
             id='title'
             type="text"
             value={title}
@@ -40,8 +44,8 @@ const CreateBlogForm = ({ handleCreate }) => {
           />
         </div>
         <div>
-          author:
-          <input
+          <TextField
+            label='author'
             id='author'
             type="text"
             value={author}
@@ -50,8 +54,8 @@ const CreateBlogForm = ({ handleCreate }) => {
           />
         </div>
         <div>
-          url:
-          <input
+          <TextField
+            label='Url'
             id='url'
             type="text"
             value={url}
@@ -59,7 +63,7 @@ const CreateBlogForm = ({ handleCreate }) => {
             onChange={e => handleUrlChange(e)}
           />
         </div>
-        <button id='submit-blog' type="submit">create</button>
+        <Button variant='contained' id='submit-blog' type="submit" >create</Button>
       </form>
     </div>
   )}

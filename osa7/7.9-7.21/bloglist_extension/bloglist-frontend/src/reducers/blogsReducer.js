@@ -20,6 +20,10 @@ const blogsReducer = (state = [], action) => {
         const newBlogList = [ ...head, ...tail ]
         console.log(newBlogList)
         return newBlogList
+    case 'COMMENT_ON_BLOG':
+        return state.map(b =>
+            b.id !== action.id ? b : { ...b, comments: b.comments.concat(action.comment) }
+          )
     case 'INIT_BLOGS':
       return action.data
     default:
@@ -58,6 +62,17 @@ export const deleteBlog = id => {
         dispatch({
           type: 'REMOVE_BLOG',
           id
+        })
+      }
+  }
+
+  export const commentOnBlog = (id, comment) => {
+    return async dispatch => {
+        await blogService.commentBlog(id, { comment })
+        dispatch({
+          type: 'COMMENT_ON_BLOG',
+          id,
+          comment
         })
       }
   }

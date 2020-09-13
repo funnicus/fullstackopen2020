@@ -1,6 +1,10 @@
 /*
  Miksi kaikki kusee ilman display flex arvoa?
 */
+html {
+  font-family: sans-serif;
+}
+
 .menu {
   display: flex;
   background-color: grey;
