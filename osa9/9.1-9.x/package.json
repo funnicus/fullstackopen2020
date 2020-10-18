@@ -1,0 +1,25 @@
+{
+  "name": "9.1-9.x",
+  "version": "1.0.0",
+  "description": "TypeScript exercises",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ts-node": "ts-node",
+    "calculateBMI": "ts-node bmiCalculator.ts",
+    "calculateExercises": "ts-node exerciseCalculator.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/funnicus/fullstackopen2020.git"
+  },
+  "author": "Juhana Kuparinen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/funnicus/fullstackopen2020/issues"
+  },
+  "homepage": "https://github.com/funnicus/fullstackopen2020#readme",
+  "devDependencies": {
+    "@types/node": "^14.11.10"
+  }
+}
