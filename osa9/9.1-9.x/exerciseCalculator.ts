@@ -8,14 +8,14 @@ interface exerciseResult {
     average: number
 }
 
-interface parseValues {
+export interface parseValues {
     week: Array<number>,
     target: number
 }
 
-const calculateExercises = (week: Array<number>, target: number): exerciseResult => {
+export const calculateExercises = (week: Array<number>, target: number): exerciseResult => {
     const average: number = week.reduce((a, b) => a + b) / week.length;
-    const success: boolean = average >= target ? true : false
+    const success: boolean = average >= target ? true : false;
     let rating: number;
     if (average >= 1.5 * target) rating = 3;
     else if (average >= target) rating = 2;
@@ -29,12 +29,12 @@ const calculateExercises = (week: Array<number>, target: number): exerciseResult
         target: target,
         average: average
     };
-}
+};
 
 const parseArguments = (args: Array<string>): parseValues => {
     if (args.length < 4) throw new Error('Not enough arguments');
 
-    const target: number = Number(process.argv[2]);
+    const target = Number(process.argv[2]);
     const week: Array<number> = process.argv.slice(3).map(d => Number(d));
 
     if (!isNaN(target) && week.find(d => isNaN(d)) === undefined) {
@@ -51,5 +51,6 @@ try {
     const { week, target } = parseArguments(process.argv);
     console.log(calculateExercises(week, target));
 } catch (err) {
-    console.log('Something went wrong...', err.message)
+    const error = err as Error;
+    console.log('Something went wrong...', error.message);
 }
